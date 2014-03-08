@@ -1,0 +1,957 @@
+\documentclass[11pt,onecolumn,a4paper,oneside]{book}
+
+\usepackage[italian]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{appendix}
+\usepackage{color}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\author{Luciano \textsc{Quercia}\\Simone \textsc{Rutigliano}}
+\date{Aggiornato: \today}
+\title{Appunti di Data Mining}
+
+\begin{document}
+
+\maketitle
+
+%\begin{abstract}
+%\end{abstract}
+
+\tableofcontents
+
+\chapter{Introduzione}
+
+	\section{Definizioni preliminari}
+		\paragraph{Dato}
+Ciò che è immediatamente presente alla conoscenza, prima di ogni elaborazione.
+
+		\paragraph{Informazione}
+		Il risultato di un processo di elaborazione e interpretazione di dati, che porta materia precedentemente sconosciuta al ricevente.
+
+		\paragraph{Conoscenza}
+Familiarità, consapevolezza, o comprensione raggiunte mediante studio, esperienza e apprendimento.	
+			
+\section{Paradigmi}
+	\paragraph{Teoria}
+\begin{enumerate}
+\item Caratterizzare gli oggetti dello studio (definizioni)
+\item Ipotizzare possibili relazioni fra loro (enunciazioni)
+\item Determinare se le relazioni sono vere (dimostrazioni)
+\item Interpretare i risultati (conclusioni)
+\end{enumerate}
+		
+\paragraph{Sperimentazione}
+\begin{enumerate}
+\item Formare un'ipotesi
+\item Costruire un modello e fare una previsione
+\item Disegnare un esperimento e raccogliere i dati
+\item Analizzare i risultati
+\end{enumerate}
+
+\paragraph{Computational simulation}
+\begin{enumerate}
+\item Astrai le componenti di un sistema complesso e le interazioni fra essi e parametrizzale
+\item Descrivi le componenti e le interazioni mediante un programma
+\item Genera dei dati al variare dei parametri
+\item Osserva le macro proprietà e interpretale
+\end{enumerate}
+
+
+\paragraph{Data discovery}
+\begin{enumerate}
+\item Catturare i dati
+\item Curare i dati (gestiti e manutenuti)
+\item Analizzare i dati (algoritmi di DM e KD)
+\item Pubblicare i risultati
+\end{enumerate}
+
+	
+\chapter{KDD Process - CRISP-DM}
+	\paragraph{Definizione}
+		La knowledge discovery è l'estrazione \emph{non banale} di informazioni \emph{implicite}, precedentemente \emph{sconosciute} e potenzialmente \emph{utili} dai dati.	
+			
+	\section{Business Understanding}
+		\begin{itemize}
+			\item Capire il dominio
+			\item Fissare gli obiettivi di business
+			\item Fissare il criterio di successo (in termini di business)
+			\item Scegliere il task appropriato
+			\item Definire il criterio di successo del processo di DM
+			\item Produrre un piano di progetto
+		\end{itemize}
+
+		\subsection{I task}
+			\subsubsection{Predizione}
+\begin{itemize}				
+\item Classificazione
+\item Regressione
+\end{itemize}
+			\subsubsection{Descrizione}
+\begin{itemize}
+\item Regole di associazione
+\item Clustering
+\item Summarization
+\item Dependency modeling
+\item Change and deviation detection
+\end{itemize}
+
+
+	\section{Data Understanding}
+	
+		\begin{itemize}
+			\item Raccogliere i dati		
+			\item Descrivere i dati
+			\item Verificare la qualità dei dati (accuratezza, completezza, consistenza e aggiornamento)
+			\item Esplorare i dati (strumenti statistici)
+		\end{itemize}
+		
+		
+	\section{Data Preparation}
+		\subsection{Campionamento}
+\paragraph{Campionamento casuale semplice} Estraggo casualmente i dati dal dataset. Posso farlo con reimmissione e senza reimmissione.
+
+\paragraph{Campionamento casuale stratificato}
+
+Divido il dataset in strati ed estraggo casualmente i dati da ogni strato. Può garantire la rappresentazione delle minoranze.
+
+\paragraph{Cluster Sampling}
+Divido il dataset in cluster e estraggo alcuni cluster per intero.
+\subparagraph{Block Sampling}
+Variante del Cluster Sampling utilizzata per ottimizzare le letture da disco. Leggo per intero alcuni blocchi in rappresentanza dell'intero dataset.
+
+\paragraph{Two-stage Sampling}
+Scelgo casualmente dei cluster e poi campiono all'interno di ogni cluster.
+
+\paragraph{Sistematic Sampling}
+Estraggo un elemento ogni $k$.
+
+
+\paragraph{Two-phase Sampling}		
+Effettuo un primo campionamento per facilitare le decisioni sulle strategie di campionamento da compiere successivamente.
+
+		\subsection{Feature Selection}
+
+\subsubsection{Embedded Methods}
+L'algoritmo di Data Mining è in grado di ignorare gli attributi inutili.
+
+\subsubsection{Feature Subset Generation}
+Per i due successivi metodi di Feature Selection è necessario generare i vari subset da valutare.
+È possibile farlo:
+\begin{itemize}
+\item Enumerando tutti i possibili subset ($2^N$)
+\item Prendendo casualmente alcuni di questi subset
+\item Generando i subset in maniera greedy
+\begin{itemize}
+\item Forward selection: parto da un insieme vuoto e aggiungo una feature alla volta.
+\item Backward selection: parto dall'insieme pieno e rimuovo una feature alla volta.
+\end{itemize}
+\end{itemize}
+
+				
+\subsubsection{Wrapper Models}
+Viene utilizzato l'algoritmo di DM per determinare il subset di feature ottimale. Sceglie il subset di feature che massimizza l'accuratezza predittiva dell'algoritmo sul training set.
+
+
+\subsubsection{Filter Models}
+È indipendente dall'algoritmo di DM.
+I diversi subset di feature sono valutati usando una qualche misura (distanza e informazione).
+
+\paragraph{Information Gain}
+Rappresenta la differenza fra l'incertezza delle classi prima e dopo aver preso in considerazione la feature $X$.
+
+$$IG(X) = \sum_i U \left(P(c_i) \right) - E \left[ \sum_i U \left( P(c_i | X ) \right) \right]$$
+
+dove $P(c_i)$ sono le probabilità a priori di ogni classe, $U()$ è l'incertezza.
+
+Se $U(x) = -x \log x$ allora $\sum_i U(P(c_i))$ è una misura di \emph{entropia}. 
+
+
+
+\paragraph{Distance Measures}
+Solo se si tratta di un task di classificazione, è possibile utilizzare una misura di distanza.
+
+Dobbiamo trovare il sottoinsieme di feature che più sono in grado di aumentare la distanza fra le classi.
+
+\subparagraph{Kullback-Leibler divergence}
+
+$$m_{KL} ( P, Q ) = \sum_{v \in V} q(v) \log \frac{q(v)}{p(v)}$$
+
+Misura la perdita di informazioni se prendiamo P invece di Q.
+Misura la differenza fra 2 distribuzioni di probabilità.
+Non è simmetrica.
+
+\subparagraph{$\chi ^2$-divergence}
+
+$$m_{\chi^2}( P, Q ) = \sum_{y \in Y} \frac{
+\left| p(y)-q(y) \right| ^2}{p(y)} $$
+
+\subparagraph{Manhattan distance}
+
+$$m_1(P,Q) = \sum_{y \in Y} \left| p(y)-q(y) \right|$$
+
+\subparagraph{Euclidean distance}
+$$m_2(P,Q) = \sum_{y \in Y} \left| p(y)-q(y) \right|^2$$
+
+\subparagraph{Minkowski's distance}
+
+$$m_\mu(P,Q) = \sum_{y \in Y} \left| p(y)-q(y) \right|^\mu$$
+
+\paragraph{Misure di dipendenza}
+Misura quanto una feature è associata alla classe.
+
+\paragraph{Misure di inconsistenza}
+Cercano il minimo numero di feature che mantenga la consistenza con i dati.
+Mirano a ottenere:
+$$P(C|FullSet) = P(C|SubSet)$$
+
+
+\subsection{Pulizia dei dati}
+I due problemi maggiori nei dati sono:
+
+\subsubsection{Noisy data}
+Possiamo trovare errori umani o outlier. Dobbiamo decidere se eliminarli o sostituirli.
+
+\subsubsection{Missing values}
+I valori mancanti possono derivare da errori umani, da informazioni non disponibili o da un errato incrocio tra sorgenti di dati eterogenee.
+
+Diverse tecniche:
+\begin{itemize}
+\item eliminare le istanze che contengono missing values
+\item eliminare l'attributo che contiene missing values
+\item rimpiazzare il missing value con
+\begin{itemize}
+\item media o mediana in caso di variabili quantitative
+\item moda o valore `unknown' in caso di variabili qualitative
+\item un valore predetto da modelli predittivi
+\end{itemize}
+\end{itemize}
+
+\subsection{Costruzione dei dati}
+
+
+I dati sono tipicamente raffinati per venire incontro ai requisiti dell'algoritmo di DM.
+
+Possiamo:
+\begin{itemize}
+\item convertire un attributo in un altro formato (e.g. data)
+\item calcolare un nuovo attributo da altri (e.g. età da data di nascita)
+\item aggregare i dati (e.g. media o somma di un periodo di tempo)
+\item normalizzare o scalare:
+\begin{itemize}
+\item min-max: porta ad un nuovo range di valori $\min$ e $\max$
+\item z-score: utilizza media e deviazione standard
+\item decimal scaling: porta al range $[-1,1]$
+\end{itemize}
+\item discretizzazione:
+\begin{itemize}
+\item equal width: i bin sono tutti di ugual misura
+\item equal depth: i bin contengono tutti lo stesso numero di istanze
+\end{itemize}
+\item One-of-N: converte una variabile categorica in numerica
+\item Factor Analysis: crea nuovi attributi "rappresentanti" di un insieme di attributi
+\end{itemize}
+
+
+\subsection{Integrazione dei dati}
+È necessario integrare i dati provenienti da differenti tabelle in un'unica tabella, eventualmente effettuando operazioni di aggregazione.
+
+\subsubsection{Unità di analisi}
+È l'entità più importante che verrà analizzata nello studio
+
+\subsubsection{Unità di osservazione}
+È l'unità sulla quale sono raccolti i dati.
+
+\subsubsection{Fallacia ecologica}
+È errato fare delle conclusioni sugli individui se le unità di analisi erano aggregazione di individui.
+
+\subsection{Formato dei dati}
+CSV, ARFF.
+
+	\section{Modeling}
+		\begin{itemize}
+	\item Selezione della tecnica di Modeling in base alle caratteristiche degli algoritmi e alle necessità
+	\item Valutazione del modello (coss-validation)
+	\item Ricerca (di parametri, del modello, di entrambi)
+	\item Applicazione la tecnica ai dati
+	\item Valutazione dei risultati del modello (accuratezza, errori di classificazione, MSE per la regressione)
+		\end{itemize}			
+		
+	\section{Evaluation}			
+Valutiamo i risultati del processo in relazione agli obiettivi di business.
+
+	\section{Deployment}	
+		Mettere in pratica i risultati ottenuti
+		
+		
+		
+		
+		
+		
+\chapter{Apprendimento di regole}
+
+	\paragraph{Obiettivo}
+	Determinare una ipotesi (congiunzione di vincoli) che coincida con il concetto target sull'intero insieme delle istanze.
+	
+	\paragraph{Definizioni}
+		\subparagraph{Ipotesi} Congiunzione di vincoli
+		
+		\subparagraph{Copertura} Un'ipotesi $h$ \emph{copre} un esempio positivo se correttamente classifica tale esempio come positivo.
+	$$ h(x) = c(x) = 1 $$
+		\subparagraph{Soddisfacibilità} Un esempio $\langle x, c(x)\rangle$ \emph{soddisfa} un'ipotesi $h$ se $h(x) = 1$ indipendentemente da $c(x)$.
+	
+		\subparagraph{Consistenza} Un'ipotesi $h$ è \emph{consistente} con un esempio $\langle x, c(x) \rangle$ se $h(x) = c(x)$ indipendentemente dal valore della classe.
+		
+		Un'ipotesi consistente con un dataset $D$ se è consistente $\forall d \in D$.
+		
+		\subparagraph{Version Space} Il Version Space è il sottoinsieme delle ipotesi in $H$ consistenti con gli esempi in $D$.
+		$$VS_{H,D} \equiv \left\{ ~ h \in H~~|~~ Consistent(h,D) ~ \right\}$$
+	
+	\section{Generate-and-test}
+		Generare tutte le possibili ipotesi e testare sul dataset.
+		Computazionalmente impossibile.
+	
+	\section{Find-S}
+	Si basa sull'ordinamento nello spazio delle ipotesi.
+	
+	Partendo dall'ipotesi nulla, per ogni esempio positivo, generalizza l'ipotesi in modo da coprire l'esempio.
+	Alla fine avrò l'ipotesi più specifica che riesce a coprire tutti gli esempi positivi. Non prende mai in considerazione i negativi. Potrebbe non essere consistente.
+	
+	\section{List-then-eliminate}
+	Partendo dall'insieme $H$, genero il $VS_{H,D}$ eliminando tutte le ipotesi non consistenti con $D$. Computazionalmente improbabile.
+
+	\section{Candidate Elimination}
+		\paragraph{General Boundary} $G$ è il sottoinsieme di $H$ che contiene tutte le ipotesi	 più generali consistenti con $D$.
+		
+		\paragraph{Specific Boundary} $S$ è il sottoinsieme di $H$ che contiene tutte le ipotesi	 più specifiche consistenti con $D$.
+
+	\subsection*{Algoritmo}
+		Per ogni esempio $d$ di training, aggiorna $S$ e $G$ in modo da eliminare le ipotesi non consistenti con $d$ e, se positivo (negativo), generalizza (specializza) $S$ ($G$).
+	
+	\subsection*{Caratteristiche}
+	Se non ci sono errori nel dataset $D$ e se $c \in H$ (inductive bias), se $S$ e $G$ convergono in una singola ipotesi $h$, $h=c$.
+	
+	Se l'algoritmo restituisce un insieme vuoto, allora ci potrebbero essere errori in $D$ oppure in $H$ non c'era $c$.
+	
+	\section{Inductive Bias}
+
+\begin{quote}
+``Un algoritmo che non fa nessuna assunzione a priori sull'identità del concetto target, non ha nessuna base razionale per classificare qualsiasi nuova istanza.''
+\end{quote}
+
+Il bias induttivo è un insieme minimo di asserzioni che permettono la classificazione di nuove istanze mai viste.
+
+	\section{Sequential Covering {\small (or Separate-and-conquer)}}
+	
+	Esegue iterativamente LEARN-ONE-RULE fino a quando non vengano coperti tutti e solo gli esempi positivi.
+	
+	Ad ogni iterazione trova le ipotesi che coprono il maggior numero di esempi positivi, purché conservi la consistenza anche con gli esempi negativi.
+
+	\subsection{Sequential Covering + Candidate Elimination}
+	Implementa LEARN-ONE-RULE con il Candidate Elimination.
+	
+	Bottom-up search. Parte da un esempio positivo (seed) ed elimina le ipotesi inconsistenti da $G$.
+	
+	\subsection{PRISM}
+	Genera delle regole in maniera iterativa, utilizzando un approccio top-down e scegliendo di volta in volta il test che massimizzi una misura di purezza $\frac{p}{t}$ che media fra accuratezza e copertura.
+	
+	Ogni regola non pura al $100\%$, viene ulteriormente specializzata, con la congiunzione di un nuovo test, fino a raggiungere la purezza massima. In assenza di errori nel dataset, la regola perfetta verrà sempre raggiunta.
+
+	\subsection{Beam Search}
+	Gli approcci precedenti effettuavano la scelta migliore localmente, rischiando di non raggiungere mai l'ottimo globale.
+	Con la \emph{Beam Search} si prendono in considerazione ad ogni iterazione le $k$ migliori scelte per aumentare la probabilità di raggiungere l'ottimo globale.
+
+	\section{Simultaneous Covering}
+È possibile generare regole a partire da alberi di decisione.
+In questo modo le regole trovate non saranno indipendenti tra loro, ma copriranno gli esempi di training in maniera ``simultanea''.
+
+Il simultaneous covering è generalmente più veloce del sequential.
+
+	\section{Multiple-Concept Learning}
+	Negli approcci precedenti si cercavano regole in grado di classificare gli esempi di una sola classe e si lasciavano tutti gli altri esempi alla classe di default.
+	È possibile generare regole con diversi valori di classe nelle conclusioni, a volte anche non mutualmente esclusivi.
+	
+	La dipendenza trai concetti può essere un problema
+	
+	
+	\section{Problema di overfitting}
+	In caso di presenza di dati rumorosi, le regole perfette trovate dagli algoritmi saranno altamente adattati ai dati di training e quindi saranno scarsamente utili per predire nuovi dati.
+	È necessario creare regole più semplici anche a costo di ridurre la purezza, in modo che siano più predittive.
+	
+	
+\chapter{Alberi di decisione}
+
+\section{Attributi discreti}
+Ogni nodo-test può avere tanti figli quanti sono i valori possibili per quell'attributo oppure è possibile effettuare test di numero arbitrario partizionando l'insieme dei valori possibili.
+\footnote{Non tutti i test hanno lo stesso costo.}
+
+\subsection{Entropia}
+
+\begin{itemize}
+\item $S$ Training
+\item $C_j \dots C_k$ Classi
+\item $RF(C_i,S)$ frequenze relative dei $s \in S$ di classe $C_i$
+\end{itemize}
+$$E(S) = - \sum_{i=1}^k RF(C_i, S) \log (RF(C_i,S))$$
+
+Misura l'incertezza contenuta in $S$.
+
+\subsection{Information Gain}
+Rappresenta il guadagno di informazione, ovvero la riduzione di incertezza ottenuta grazie al test.
+$$ G(S,t) = E(S) - \sum_{i} \frac{ \left| S_i \right| }{ \left| S \right| } E(S_i)$$
+Il test migliore sarà quello in grado di massimizzare $G(S,t)$.
+
+\subsection{Problema}
+	L'Information Gain favorisce i test con numerosi valori possibili.
+
+	Soluzione 1: utilizzare solo test binari. Computazionalmente oneroso.
+	
+	Soluzione 2: Pesare l'IG con il rapporto delle istanze in ogni partizione.
+	
+	$$ P(S,t) = - \sum_i \frac{ \left| S_i \right| }{ \left| S \right| } \log \left( \frac{ \left| S_i \right| }{ \left| S \right| } \right) $$
+	
+	$P$ è l'informazione potenziale della partizione stessa, senza considerare la classe.
+
+
+\subsection{Gain ratio Criterion}
+$$ GainRatio(S,t) = G(S,t) / P(S,t) $$
+
+Il test preferito sarà quello che massimizza il Gain Ratio.
+
+\section{Attributi continui}
+Sugli attributi continui si effettuano test del tipo $A_i < \theta$ per suddividere in 2 sottoinsiemi.
+\footnote{Non tutti i test hanno lo stesso costo.}
+
+\subsection{Information Gain}
+Calcoliamo l'IG sui valori $\theta$ candidati.
+
+I candidati saranno i valori medi degli intervalli esistenti fra 2 coppie di valori di classi diverse. 
+
+\section{Missing Value Problem}
+\begin{itemize}
+\item Off-line: Processo Kdd $\rightarrow$ Data transformation
+\item On-line: l'algoritmo è in grado di gestirli
+\end{itemize}
+
+I missing value generano 3 tipi di problemi:
+\begin{itemize}
+\item Valutazione di un test
+\item Partizionamento del training set
+\item Classificazione di un nuovo esempio
+\end{itemize}
+
+\subsection{Valutazione di un test}
+Pesiamo l'Information Gain di un test $t$ su un attributo $A_j$ con il rapporto tra esempi senza missing value in $A_j$ e il totale degli esempi.
+
+Nel calcolo di $P(S,t)$ dobbiamo considerare il missing value come ulteriore valore di $A_j$.
+
+
+\subsection{Partizionamento del training set}
+Le tuple con missing value in $A_j$, in un eventuale partizionamento con test su $A_j$ verranno inserite in tutti i sottoinsiemi $S_i$, pesate con la probabilità di appartenere a quel sottoinsieme.
+
+$$w_{sunny} = \frac{\#tuple~sunny}{\#tuple~senza~missing~value~in~A_j}$$
+
+Alle foglie degli alberi avremo un doppio valore.
+\verb+Don't Play(3.4/0.4)+ dove il primo indica il numero di esempi che ricadono in quella foglia (anche parziali) e il secondo il numero di errori commessi.
+
+
+\subsection{Classificazione di un nuovo esempio}
+Dato un nuovo esempio con missing value in $A_j$, quando raggiungo un test su $A_j$, devo esplorare tutti i sottoalberi, pesando con la probabilità che l'esempio ricada in quel sottoalbero e combinando aritmeticamente i risultati.
+
+\section{Problemi}
+Gli alberi di decisione non permettono la revisione delle scelte, quindi possono non raggiungere l'ottimalità.
+
+Un errore fatto nella scelta di un nodo di test, si propaga su tutti i suoi discendenti.
+
+Gli alberi di decisione sono limitati ai problemi risolvibili splittando ripetutamente lo spazio delle soluzioni.
+
+Gli alberi troppo profondi possono frammentare troppo lo spazio delle soluzioni e adattarsi eccessivamente ai dati di training (\emph{overfitting}).
+
+Possibili soluzioni:
+\begin{itemize}
+\item Fermare la crescita (difficile)
+\item Potare
+\end{itemize}
+
+\section{Pruning}
+\subsection{REP - Reduced Error Pruning}
+Usa un pruning set per stimare l'accuratezza di un nodo intermedio $v$ e confrontarla con quella del suo sottoalbero $T$.
+
+$$Gain_{REP} = \varepsilon_T - \varepsilon_v$$
+
+dove $\varepsilon$ è il numero di errori di classificazione.
+
+\paragraph{Restrizione bottom-up}
+$T$ può essere potato solo se non contiene un sottoalbero con errore inferiore a $T$.
+
+\subsubsection{Algoritmo}
+Partiamo dall'albero completo. Visitiamo l'albero in post-ordine. Per i nodi intermedi $v$:
+\begin{itemize}
+\item calcolo l'accuratezza (sul pruning set) dell'albero completo
+\item calcolo l'accuratezza (sul pruning set) potando a $v$ e sostituendo $T$ con la classe di maggioranza che ha nel growing set
+\end{itemize}
+In caso di aumento di accuratezza, poto. In caso di uguaglianza, poto per Occam.
+
+
+
+\subsection{MEP - Minimal Error Pruning}
+\begin{itemize}
+\item Non necessita di pruning set.
+\item Stima gli errori sul growing/training.
+\item Usa il metodo Bayesiano per la stima delle probabilità.
+\item Bottom up.
+\item Pota per minimizzare la stima degli errori di classificazione.
+\end{itemize}
+
+Calcolo la probabilità di misclassification ad un noto $v$ ignorando i suoi sottoalberi figli (utilizzo la classe di maggioranza a $v$) e poi prendendoli in considerazione.
+
+Se l'errore statico (senza figli) è minore o uguale (Occam) all'errore di backed-up (con i suoi sottoalberi), poto.
+
+L'errore a T sarà il minimo trai 2.
+
+$$ E(T) = \min \left( e \left( v \right), ~ \sum_i p_i E \left( T_i \right) \right) $$
+
+$e(v)$ possiamo calcolarlo in 2 modi.
+
+Dati $N$ esempi, $n_C$ numero di esempi di classe di maggioranza $C$, $p_{C_a}$ probabilità a priori di classe $C$, $m$ parametro non negativo:
+
+\subsubsection{Laplace}
+$$ p_C = \frac{n_C +1}{N+k}$$
+
+\subsubsection{m-estimate}
+$$ p_C = \frac{p_{C_a} \times m + n_c}{N+m} $$
+
+
+\subsection{PEP - Pessimistic Error Pruning}
+Come MEP però top-down. L'errore del nodo è calcolato come segue.
+
+Dati $N$ esempi totali, $N_v$ gli esempi che ricadono nel nodo $v$, $\varepsilon_v$ il numero di errori di classificazione al nodo $v$ :
+
+$$ q(v) = \frac{\varepsilon_v + 0.5}{N_v}$$
+
+l'errore all'albero è:
+
+$$ q(T) = \frac{\sum_{l \in leafs(T)} \left( \varepsilon_l + 0.5 \right) }{N_v}$$
+
+\subsection{EBP - Error-Based Pruning}
+Miglioramento di PEP.
+Bottom-up (al contrario di PEP). Aumenta l'errore pessimistico con la regola di pruning 1-SE (1 standard error).
+
+Pota se $$q(v) \leq q(T) + SE \left( q(T) \right)$$
+
+Permette l'innesto. Qualsiasi nodo interno può essere rimosso e rimpiazzato da uno dei suoi sottoalberi.
+
+
+\subsection{CCP - Cost-Complexity Pruning}
+Considera il tasso di errore sul growing e sul pruning. Considera la dimensione dell'albero. Trova il compromesso per minimizzare l'errore e la complessità.
+
+$$Total~cost = Error~cost + Complexity~cost$$
+
+Con $R()$ il numero di errori di classificazione nel growing set e $N_T$ il numero di foglie in $T$,
+
+$$Cost(T) = R(T) + \alpha N_T$$
+
+$$Cost(v) = R(v) + \alpha $$
+
+$\alpha$ rappresenta il costo computazionale di ogni foglia.
+
+\subsection{Rule Pruning}
+Converte l'albero in regole e le valuta indipendentemente.
+Rimuove le precondizioni se il risultato è più accurato.
+Ordina le regole per accuratezza stimata. Applica le regole in questo ordine per classificare.
+
+
+\chapter{Framework Bayesiano}
+
+$$P(h|D)=\frac{P(D|h)P(h)}{P(D)}$$
+
+
+\section{MAP - Maximum A Posteriori}
+$$h_{MAP} = \arg\max_{h \in H} P(h|D)$$
+per il teorema di Bayes e per la costanza di $P(D)$, deriva che:
+$$h_{MAP} = \arg\max_{h \in H} P(D|h)P(h)$$
+
+Se tutte le ipotesi $h \in H$ sono equiprobabili, $P(H)$ sarà costante $\left( \frac{1}{|H|} \right)$ e avremo la maximum likelihood (ML) hypothesis:
+$$h_{ML} = \arg\max_{h\in H} P(D|h)$$
+
+
+\section{MDL - Minimum Description Length}
+Il principio di Minimum Description Length raccomanda la scelta della ipotesi che minimizzi la somma di due lunghezza di descrizione, una che rappresenti l'ipotesi ($C_1$) e l'altra che rappresenti $D|h$ ($C_2$).
+
+$$h_{MDL} = \arg\min_{h\in H} L_{C_{1}}(h) + L_{C_{2}}(D|h)$$
+
+Come Occam, raccomanda la scelta dell'ipotesi più semplice (corta).
+Fornisce un modo per gestire l'overfitting.
+
+$h_{MDL}$ e $h_{MAP}$ sono fortemente correlate.
+Infatti:
+\begin{eqnarray*}
+h_{MAP} = & \arg\max\limits_{h \in H} & P(D|h)P(h) \\
+h_{MAP} = & \arg\max\limits_{h \in H} & \left( \log_{2} P(D|h) + \log_{2} P(h) \right) \\
+h_{MAP} = & \arg\min\limits_{h \in H} & \left( - \log_{2} P(D|h) - \log_{2} P(h) \right) \\
+\end{eqnarray*}
+
+$\log_{2} P(h)$ rappresenta la lunghezza della codifica ottimale dell'ipotesi $h$. La chiamiamo $L_{C_H}(h)$.
+$\log_{2} P(D|h)$ rappresenta la lunghezza della codifica ottimale dell'ipotesi $D|h$. La chiamiamo $L_{C_{D|h}}(D|h)$.
+
+Quindi se $C_1 = C_H$ e $C_2 = C_{D|h}$ allora $h_{MDL} = h_{MAP}$.
+
+
+\section{Bayesian Optimal Classifier}
+Possiamo classificare una nuova istanza combinando le predizioni di tutte le ipotesi, pesate con la loro probabilità a posteriori.
+
+$$P(v_j | D ) = \sum_{h_i \in H} P(v_j | h_i)P(h_i | D)$$
+
+la nuova istanza verrà classificata in base a
+
+$$ \arg\max_{v_j \in V} P(v_j | D ) $$
+
+Qualsiasi sistema che classifica in questo modo è chiamato Classificatore Ottimale di Bayes.
+
+Nessun altro metodo, usando lo stesso spazio delle ipotesi e la stessa conoscenza a priori, può superare questo metodo in media.
+
+Poiché è troppo oneroso da applicare, può essere approssimato utilizzando solo $h_{MAP}$
+
+$$P(v_j | D ) \approx P(v_j | h_{MAP})P(h_{MAP} | D)$$
+
+
+\section{Gibbs Algorithm}
+L'algoritmo di Gibbs, invece di utilizzare solo $h_{MAP}$, sceglie ogni volta una ipotesi $h \in H$ a caso, in accordo alla distribuzione di probabilità a posteriori su $H$, e la usa per predire la nuova istanza $x$.
+
+L'errore di classificazione è al più il doppio di quello Ottimale di Bayes.
+
+
+\section{Na\"{i}ve Bayes Classifier}
+Si applica quando ogni istanza è descritta da una tupla di valori $\langle a_1, \dots, a_n \rangle$.
+La nuova istanza è assegnata al più probabile valore di classe $v_{MAP}$ data la tupla $\langle a_1, \dots, a_n \rangle$.
+
+$$ v_{MAP} = \arg\max_{v_j \in V} P(v_j | a_1, \dots, a_n ) $$
+
+Per il teorema di Bayes e per la costanza di $P( a_1, \dots, a_n )$, deriva che:
+
+$$ v_{MAP} = \arg\max_{v_j \in V} P( a_1, \dots, a_n | v_j ) P(v_j) $$
+
+$P(v_j)$ può essere stimato con la frequenza relativa del valore $v_j$ nel training set.
+
+Calcolare $P( a_1, \dots, a_n | v_j )$ è impraticabile a causa delle troppe probabilità da stimare.
+
+Assumiamo che i valori degli attributi siano condizionalmente indipendenti, quindi
+$$v_{NB} = \arg\max_{v_j \in V} P(v_j)\prod_{i=1}^n P(a_i|v_j)$$
+
+\subsection{Realizzazione}
+Realizzare un NBC significa stimare due insiemi di parametri:
+
+$$\theta_{ijk} = \hat P (A_k = a_{ki} ~ | ~ v_j ) $$
+
+$$\pi_j = \hat P(v_j)$$
+
+con $J$ possibili classi, $n$ possibili attributi, $I$ possibili valori discreti per ogni attributo.
+
+Possiamo stimare i valori $\theta_{ijk}$ e $\pi_j$ con la m-estimate
+
+$$\frac{N_c + mp}{N+m}$$
+con $\frac{N_c}{N}$ la frequenza relativa corrispondente alla probabilità da stimare, $p$ probabilità a priori che vogliamo stimare e $m$ costante che determina quanto pesare $p$ sui dati osservati. Tipicamente $m=|A_k|$ e $p=\frac{1}{|A_k|}$, cioè la correzione di Laplace. In assenza di dati, parto dall'equiprobabilità invece che da $\frac{0}{0}$.
+
+\subsection{Attributi continui}
+Nel caso di attributi continui $A_k$ si assume una distribuzione di probabilità Gaussiana.
+Quindi per utilizzare ogni $A_k$ continuo nella stima dei parametri dobbiamo calcolare media e varianza di ogni $A_k$
+
+$$\mu_{kj} = E \left[ A_k | v_j \right]$$
+$$\sigma^2_{kj} = E \left[ (A_k - \mu_{kj})^2 | v_j \right]$$
+
+\subsection{Proprietà}
+Incrementale (possiamo aggiungere dinamicamente nuovi esempi di training).
+
+Tira fuori non solo una classificazione ma anche una distribuzione di probabilità sulle classi.
+
+Può essere utilizzato per la meta-classificazione, combinando e pesando diversi classificatori.
+
+
+\chapter{Regressione}
+
+\section{Ipotesi classiche nella regressione con errore additivo $\varepsilon$}
+\label{ipotesi}
+
+\begin{itemize}
+
+\item $\varepsilon_i \perp X_1, \dots, X_p$ \hspace{.5cm} Indipendenza dai regressori.
+
+\item $E(\varepsilon_i) = 0$ \hspace{1.5cm} Valore atteso nullo
+
+\item $Var(\varepsilon_i) = \sigma^2$ \hspace{.9cm} Omoschedasticità (stessa dispersione)
+
+\item $Cov(\varepsilon_i, \varepsilon_j ) = 0$  \hspace{.7cm} Incorrelazione tra gli errori
+\end{itemize}
+
+\section{Modello di regressione semplice}
+Si parla di regressione \emph{semplice} quando si prende in considerazione un solo regressore.
+$$Y= f \left( X, \beta \right) + \varepsilon$$
+
+Si parla di regressione \emph{lineare} semplice quando $f$ assume la forma di una retta con $\beta = ( \beta_0, \beta_1 ) $ quindi:
+
+$$Y = \beta_0 + \beta_1 X + \varepsilon$$
+
+\subsection{Metodo dei minimi quadrati}
+Metodo per ottenere $\beta_0$ e $\beta_1$ che minimizzino la sommatoria dei quadrati degli scarti.
+
+La funzione:$$D(\beta_0, \beta_1) = \sum_i(y_i - \beta_0 - \beta_1 x_i)^2$$ (parabola) ammette un solo punto di minimo, quindi la soluzione è unica.
+Passa per il punto di coordinate medie $(\bar x, \bar y )$
+
+\paragraph{Teorema di Gauss-Markov}
+Sotto le ipotesi classiche (\ref{ipotesi}), gli stimatori sono lineari, non distorti e a varianza uniformemente minima.
+
+\subsection{$R^2$}
+$$\sum_i (y_i - \bar y)^2 = \sum_i(y_i- \hat y_i) ^2 + \sum_i(\hat y_i- \bar y) ^2$$
+
+$\sum_i(y_i - \hat y_i)^2$ Devianza di dispersione (residua)
+
+$\sum_i(\hat y_i- \bar y) ^2$ Devianza di regressione (spiegata)
+
+$$R^2 = 1- \frac{\sum_i(y_i-\hat y_i)^2}{\sum_i(y_i-\bar y)^2}$$
+
+$R^2$ ($\rightarrow [0,1] $) calcola il complementare della percentuale tra devianza residua e devianza totale.
+
+Per ottenere funzioni di regressione migliori dobbiamo massimizzare $R^2$, cioè minimizzare la devianza residua, cioè avvicinare il più possibile le $\hat y_i$ ($y$ calcolate da $f$) ai valori reali $y$.
+
+\paragraph{Diagramma di \emph{Anscombe}}
+\begin{itemize}
+\item Ascisse: valori interpolati
+\item Ordinate: residui $y_i - \hat y_i$
+\item Obiettivo: Distribuzione casuale dei punti
+\end{itemize}
+
+\paragraph{Diagramma quantile-quantile}
+\begin{itemize}
+\item Ascisse: normale standard
+\item Ordinate: distribuzione $\hat \varepsilon_i$ standardizzati e ordinati
+\item Obiettivo: $y=x$
+\end{itemize}
+
+\subsection{Regressori qualitativi}
+Si sfrutta una funzione indicatrice $I_E$ che assume i valori $1$ o $0$ a seconda che una certa condizione $E$ sia o meno verificata.
+
+$$\hat \beta_0 = \bar y_B$$
+$$\hat \beta_1 = \bar {y}_A - \bar{y}_B $$
+
+\section{Regressione polinomiale semplice}
+Una variabile, $f$ polinomiale di grado $p$ con $\beta=(\beta_0, \beta_1, \dots, \beta_p)$
+
+$$Y = \beta_0 + \beta_1 X + \beta_2 X^2 + \dots + \beta_p X^p + \varepsilon $$
+
+La variabile $X$ deve essere nota per almeno $p+1$ punti.
+
+\section{Regressione lineare multipla}
+$p$ regressori, $f$ lineare con $\beta=(\beta_0, \beta_1, \dots, \beta_p)$
+
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p + \varepsilon $$
+
+Le variabili $X_i$ devono essere note per almeno $p+1$ punti.
+
+\section{Notazione matriciale}
+È possibile esprimere tutti i modelli visti finora con la notazione matriciale.
+
+$$Y= \underline{\mathbf{X}}^T \underline{\mathbf{\beta}} + \varepsilon$$
+
+dove:
+$\underline{\mathbf{X}}$ è il vettore colonna dei regressori e $\underline{\mathbf{\beta}}$ è il vettore colonna dei coefficienti.
+
+\section{Trasformazione dei dati}
+Non necessariamente le ipotesi classiche devono essere valide con riferimento alle variabili originali.
+
+È quindi possibile che tali ipotesi valgano con riferimento a loro opportune trasformazioni.
+
+Esempio:
+$$ln(Y) = \beta_0 + \beta_1 \ln (X_1) + \beta_2 e^{X_2} + \beta_3 \frac{X_2}{X_1}+\dots + \varepsilon$$
+
+\section{Alberi di regressione}
+Per regredire potremmo utilizzare una funzione approssimante a gradini, cioè una funziona costante a tratti su intervalli.
+
+Per farlo è necessario partizionare il dataset e poi trovare i parametri $c_j$ associati alla partizione.
+
+Se la partizione è nota, possiamo trovare i parametri $c_j$ che minimizzino l'$EEP$ (Errore Empirico di Previsione, media del quadrato degli scarti tra $y$ e $\hat y$).
+
+Se la partizione non è nota, dovremmo valutare tutte le possibili partizioni. Ciò sarebbe computazionalmente impossibile quindi utilizziamo una procedura ricorsiva. Costruiamo l'albero di regressione.
+
+Parto dalla partizione con 1 solo elemento (tutto il training) e ad ogni passo:
+Provo tutti i valori $s$ trai valori del training.
+Splitto su $s$, stimo i parametri $c$ della funzione associata a questa partizione, calcolo l'$EEP$ e lo confronto con l'$EEP$ al passo precedente.
+
+Il test finale scelto sarà quello che massimizzerà il decremento di $EEP$ dal passo precedente tra tutte le suddivisioni di tutti gli elementi della partizione.
+
+\subsection{Overfitting}
+
+\paragraph{Criteri d'arresto}
+
+\begin{itemize}
+\item Individuazione di un numero minimo di osservazioni per ciascuna foglia
+
+\item Individuazione di una soglia minima per il decremento dell'$EEP$
+\end{itemize}
+
+\paragraph{Pruning selettivo}
+
+
+\subsection{Variabili categoriche}
+In caso di ordinali, i test saranno del tipo $x<s$.
+In caso di nominali, $x \in M$ con $M$ un sottoinsieme dei possibili valori dell'attributo.
+
+\section{Alberi di Modelli}
+Un albero di modello è un albero di regressione che nelle foglie presenta delle funzioni lineari al posto delle funzioni costanti.
+
+\section{SMoTI - Stepwise Model Tree Induction}
+Algoritmo per la creazione di alberi di modelli.
+
+Negli alberi di modelli tradizionali, i parametri dei modelli vengono calcolati alle foglie solo sugli esempi che ricadono in quella particolare foglia.
+
+L'idea alla base di SMoTI è quella di sfruttare più esempi nel calcolo di alcuni parametri per offrire una visione più globale del dataset.
+
+Per fare ciò, introduce un nuovo tipo di nodo chiamato nodo di regressione, non foglia, contenente una regressione parziale su un solo regressore e avente un unico figlio.
+Tutti gli esempi di quel ramo, passando per il nodo di regressione, subiscono una trasformazione lineare per eliminare l'effetto di quel regressore su tutti gli altri attributi.
+
+Il modello finale per ogni foglia sarà dato da una combinazione della foglia con tutti i nodi di regressione incontrati nel ramo percorso.
+
+
+\chapter{Analisi di associazione}
+
+	\section{Correlazione di 2 variabili}
+
+Il coefficiente di correlazione di Pearson $\rho_{XY}$ misura la forza di un'associazione lineare fra 2 variabili $X$ e $Y$.
+$\rightarrow [-1;1]$
+
+\begin{eqnarray}
+ \sigma^2_X & = & E\left[(X-E\left[X\right])^2\right]\\
+ \sigma^2_Y & = & E\left[(Y-E\left[Y\right])^2\right]\\
+ \sigma_{XY} & = & E\left[(X-E\left[X\right])(Y-E\left[Y\right]\right]\\
+ \sigma^2_{X+Y} & = & \sigma^2_X + \sigma^2_Y + 2 \sigma_{XY}\\
+ \rho_{XY} & = & \frac{\sigma_{XY}}{\sqrt{\sigma^2_X \sigma^2_Y}} = \frac{\sigma_{XY}}{\sigma_X \sigma_Y}\\
+r_{XY} & = & \frac{s_{XY}}{\sqrt{s^2_X s^2_Y}} = \frac{s_{XY}}{s_X s_Y}
+\end{eqnarray}
+
+\section{Correlazione parziale}
+È una misura di associazione fra due variabili, dopo aver controllato l'effetto di una o più variabili addizionali.
+
+$$
+r_{xy.z} = \frac{r_{xy}- \left(r_{xz} \cdot r_{yz} \right)}{\sqrt{ \left(1-r^2_{xz} \right) \cdot \left(1-r^2_{yz} \right) }} $$
+
+\section{Regressione multipla}
+
+Nella regressione multipla, i coefficienti $\beta_i$ sono legati alla correlazione parziale.
+In particolare, se varianza 1, $\beta_i = \rho_{Yi.1,2,\dots ,i-1,i+1, \dots, p}$
+
+
+\section{2 Variabili qualitative}
+Nel caso di variabili nominali, è impossibile usare Pearson. Si ricorre alle tabelle di contingenza.
+
+\subsection{$\chi^2$}
+$$\chi^2 = \sum_i \frac{\left( f_o^i - f_e^i \right)^2}{f_e^i}$$
+dove $f_o^i$ è la frequenza osservata in ogni cella e $f_e^i$ è la frequenza attesa calcolata come:
+$$f_e^i = \left( \frac{c_i r_i}{N} \right)$$
+con $c_i$ somma sulla $i$-esima colonna e $r_i$ somma sulla $i$-esima riga.
+$\chi^2$ è una misura simmetrica.
+
+\subsection{Lambda}
+Misura la percentuale di miglioramento nella nostra abilità di predire il valore della variabile dipendente, una volta che conosciamo il valore della variabile dipendente.
+
+$$\lambda(y|x) = \frac{\sum_x \max\limits_y f_{xy}-\max\limits_y f_{*y}}{N-\max\limits_y f_{*y}} $$
+
+A parole, misura la percentuale di nuove istanze corrette sul totale di quelle errate senza conoscere queste nuove informazioni.
+
+$$\frac{Tutte~le ~corrette ~ora~ MENO~ le~ gi\acute{a}~ corrette}{tutto~ MENO~ le~ gi\acute{a}~ corrette}$$
+
+\subsection{Spearman Rank Correlation Coefficient}
+Indice di correlazione tra due classifiche di variabili.
+
+È definita:
+
+$$ r_S = 1 - \frac{6\left[ \sum\limits_i D^2_i \right]}{\left( n -1 \right) ~ n ~ \left( n+1 \right)} $$
+
+con $D_i$ le differenze tra le posizioni e $n$ la posizione massima.
+
+	\section{Regole di associazione}
+	Task di data mining descrittivo. Mira alla scoperta di relazioni fra gli oggetti di interesse nel database.
+	
+	In generale una regola di associazione ha forma:
+	$\textbf{X} \rightarrow \mathbf{Y}$ che correla la presenza di un insieme di oggetti $\textbf{X}$ (antecedente) con un altro insieme di oggetti $\textbf{Y}$ (conseguente).
+	
+	$s\%$ è il supporto. Misura la percentuale di presenza di entrambi i set nell'intero DB. $p(\textbf{X} \cup \textbf{Y})$
+	
+	$c\%$ è la confidenza. Misura la percentuale di presenza del conseguente nelle tuple contenenti l'antecedente. $p( \textbf{Y} | \textbf{X} )$
+	
+	\section{Mining di regole di Associazione}
+La scoperta di regole di associazione si divide in due passi:
+\begin{enumerate}
+\item Cercare gli itemset più frequenti sul DB ($s\% \geq s\%_{\min}$)
+\item Generare regole di associazione partendo dagli itemsets ($c\% \geq c\%_{\min}$)
+\end{enumerate}
+	
+\subsection{Ricerca di Itemsets}
+
+\subsubsection{APRIORI}
+Ricerca di itemsets.
+
+\begin{enumerate}
+\item Inizialmente scanna il DB per prendere gli itemset di lunghezza $1$.
+
+\item Genera itemset candidati	di lunghezza $k+1$ a partire dai frequenti di lunghezza $k$
+
+\item Testa i candidati sul DB.
+
+\item Termina quando non ci sono più nuovi frequenti oppure non possono essere generati altri candidati.
+\end{enumerate}
+
+\paragraph{Problemi}
+Numerosi scan del DB sono costosi. Numero di candidati troppo alto.
+		
+		\subsubsection{FPGrowth}
+Ricerca di itemsets.
+
+Usa lo stesso principio di pruning di Apriori.
+
+Scansiona il DB solo 2 volte. La prima volta cerca gli itemset di lunghezza 1. La seconda volta, costruisce la propria struttura dati chiamata FP-tree.
+
+\paragraph{Algoritmo}
+\begin{enumerate}
+\item Creo la tabella degli 1-itemset frequenti ed eventualmente elimino quelli che non superano una soglia.
+\item Creo un nuovo database epurato dagli item inutili e con ogni itemset ordinato per frequenza decrescente.
+\item Partendo da questo nuovo DB, costruisco l'albero FP
+\item Per ogni item, scrivo tutti i possibili percorsi sull'albero che portano a quell'item e la frequenza con cui accade.
+\item Genero tutti i possibili itemset frequenti, unendo ogni item con l'insieme delle parti dell'itemset del percorso più frequente.
+\end{enumerate}
+
+\paragraph{Vantaggi}
+\begin{itemize}
+\item Non genera candidati (direttamente i frequenti)
+\item Non testa candidati (non ha candidati)
+\item Scansione del DB solo 2 volte 
+\end{itemize}
+
+\subsection{Creazione di regole di associazione}
+
+\begin{algorithm}
+\caption{Generazione di regola da itemset frequenti.}
+\begin{algorithmic}
+\STATE $R = \left\lbrace \right\rbrace$
+\FORALL{itemsets frequenti $X$}
+\FORALL{itemsets $A \subset X$, $A \neq \emptyset$}
+\STATE $B = X - A $
+\STATE crea la regola $r$: $\left( A \Rightarrow B \right)$
+\STATE calcola la confidenza $c\%_r$
+\IF{$c\%_r \geq c\%_{\min}$}
+\STATE $R = R \cup \left\lbrace r \right\rbrace$
+\ENDIF
+\ENDFOR
+\ENDFOR
+\RETURN $R$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Problemi}
+Per gestire variabili quantitative, è necessario discretizzare.
+
+
+\end{document}
