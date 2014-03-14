@@ -514,7 +514,7 @@ Se l'errore statico (senza figli) è minore o uguale (Occam) all'errore di backe
 
 L'errore a T sarà il minimo trai 2.
 
-$$ E(T) = \min \left( e \left( v \right), ~ \sum_i p_i E \left( T_i \right) \right) $$
+$$ E(T) = \min \left( e \left( v \right), ~ \sum_i p_i e \left( T_i \right) \right) $$
 
 $e(v)$ possiamo calcolarlo in 2 modi.
 
@@ -583,7 +583,7 @@ $$h_{ML} = \arg\max_{h\in H} P(D|h)$$
 \section{MDL - Minimum Description Length}
 Il principio di Minimum Description Length raccomanda la scelta della ipotesi che minimizzi la somma di due lunghezza di descrizione, una che rappresenti l'ipotesi ($C_1$) e l'altra che rappresenti $D|h$ ($C_2$).
 
-$$h_{MDL} = \arg\min_{h\in H} L_{C_{1}}(h) + L_{C_{2}}(D|h)$$
+$$h_{MDL} = \arg\min_{h\in H} \left( L_{C_{1}}(h) + L_{C_{2}}(D|h) \right)$$
 
 Come Occam, raccomanda la scelta dell'ipotesi più semplice (corta).
 Fornisce un modo per gestire l'overfitting.
