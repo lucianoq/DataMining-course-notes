@@ -224,7 +224,7 @@ Diverse tecniche:
 \begin{itemize}
 \item eliminare le istanze che contengono missing values
 \item eliminare l'attributo che contiene missing values
-\item rimpiazzare il missing value con
+\item rimpiazzare il missing value con:
 \begin{itemize}
 \item media o mediana in caso di variabili quantitative
 \item moda o valore `unknown' in caso di variabili qualitative
@@ -262,7 +262,7 @@ Possiamo:
 È necessario integrare i dati provenienti da differenti tabelle in un'unica tabella, eventualmente effettuando operazioni di aggregazione.
 
 \subsubsection{Unità di analisi}
-È l'entità più importante che verrà analizzata nello studio
+È l'entità più importante che verrà analizzata nello studio.
 
 \subsubsection{Unità di osservazione}
 È l'unità sulla quale sono raccolti i dati.
@@ -286,7 +286,7 @@ CSV, ARFF.
 Valutiamo i risultati del processo in relazione agli obiettivi di business.
 
 	\section{Deployment}	
-		Mettere in pratica i risultati ottenuti
+		Mettere in pratica i risultati ottenuti.
 		
 		
 		
@@ -299,7 +299,7 @@ Valutiamo i risultati del processo in relazione agli obiettivi di business.
 	Determinare una ipotesi (congiunzione di vincoli) che coincida con il concetto target sull'intero insieme delle istanze.
 	
 	\paragraph{Definizioni}
-		\subparagraph{Ipotesi} Congiunzione di vincoli
+		\subparagraph{Ipotesi} Congiunzione di vincoli.
 		
 		\subparagraph{Copertura} Un'ipotesi $h$ \emph{copre} un esempio positivo se correttamente classifica tale esempio come positivo.
 	$$ h(x) = c(x) = 1 $$
@@ -376,7 +376,7 @@ Il simultaneous covering è generalmente più veloce del sequential.
 	Negli approcci precedenti si cercavano regole in grado di classificare gli esempi di una sola classe e si lasciavano tutti gli altri esempi alla classe di default.
 	È possibile generare regole con diversi valori di classe nelle conclusioni, a volte anche non mutualmente esclusivi.
 	
-	La dipendenza trai concetti può essere un problema
+	La dipendenza trai concetti può essere un problema.
 	
 	
 	\section{Problema di overfitting}
@@ -583,7 +583,11 @@ $$h_{ML} = \arg\max_{h\in H} P(D|h)$$
 \section{MDL - Minimum Description Length}
 Il principio di Minimum Description Length raccomanda la scelta della ipotesi che minimizzi la somma di due lunghezza di descrizione, una che rappresenti l'ipotesi ($C_1$) e l'altra che rappresenti $D|h$ ($C_2$).
 
+<<<<<<< HEAD
 $$h_{MDL} = \arg\min_{h\in H} \left( L_{C_{1}}(h) + L_{C_{2}}(D|h) \right)$$
+=======
+$$h_{MDL} = \arg\min_{h\in H} \left(L_{C_{1}}(h) + L_{C_{2}}(D|h)\right)$$
+>>>>>>> 6558c64bb230c5b744c6f99d7406fae405b4f667
 
 Come Occam, raccomanda la scelta dell'ipotesi più semplice (corta).
 Fornisce un modo per gestire l'overfitting.
